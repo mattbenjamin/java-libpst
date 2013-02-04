@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="java-libpst" default="package" basedir=".">
+
+	<property name="project.dir" value="." />
+	<property name="project.name" value="java-libpst" />
+	<property name="build.dir" value="${project.dir}/build" />
+	<property name="bin.dir" value="${project.dir}/bin" />
+	<property name="source.dir" value="${project.dir}/src" />
+	<property name="config.dir" value="${project.dir}/config" />
+	<property name="licenses.dir" value="${project.dir}/licenses" />
+	<property name="scripts.dir" value="${project.dir}/scripts" />
+	<property name="lib.dir" value="${project.dir}/lib" />
+	<property name="package.file.jar" value="${build.dir}/${project.name}.jar" />
+
+	<path id="classpath.lib">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean" description="Removes all generated files">
+		<delete dir="${build.dir}" />
+		<delete dir="${bin.dir}" />
+	</target>
+
+	<target name="setup" description="Creates the ${build.dir} and ${bin.dir} directories">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${bin.dir}" />
+	</target>
+
+	<target name="compile" depends="setup" description="Compiles src to ${bin.dir}">
+		<mkdir dir="${bin.dir}" />
+
+		<javac srcdir="${source.dir}" destdir="${bin.dir}" source="1.6" target="1.6" debug="on" fork="yes" deprecation="on" includeantruntime="false">
+			<classpath refid="classpath.lib" />
+		</javac>
+
+		<!-- copy in non-compiled files like props if needed -->
+		<copy todir="${bin.dir}">
+			<fileset dir="${source.dir}" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="package-jar" depends="compile" description="Jars up the compiled classes into ${package.file.jar}">
+		<delete file="${package.file.jar}" />
+		<jar destfile="${package.file.jar}">
+			<fileset dir="${bin.dir}" includes="com/**" />
+			<fileset dir="${bin.dir}" includes="name/**" />
+			<fileset dir="${bin.dir}" includes="org/**" />
+		</jar>
+	</target>
+
+</project>
